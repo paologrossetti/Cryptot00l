@@ -72,3 +72,9 @@ class AESClass:
         except Exception as err:
             logging.error(f"Error in string encryption: {err}")
             print(f"Error in string decryption: {err}")
+
+    def encrypt_file(self, data):
+        pass
+
+    def decrypt(self, data):
+        pass
