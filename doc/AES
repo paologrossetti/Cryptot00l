@@ -81,7 +81,7 @@ it will affect all following block.
 
 OFB mode: Output FeedBack mode
 The OFB (Output FeedBack) mode of operation (Fig. 4) also enables a block encryptor to be used as a stream encryptor.
-It also doesn’t need padding data.
+It also doesn’t need padding data (the ciphertext is the same length as the plaintext).
 In this mode, it will encrypt the IV in the first time and encrypt the per-result.
 Then it will use the encryption results to xor the plaintext to get ciphertext.
 It is different from CFB, it always encrypts the IV.
@@ -92,7 +92,8 @@ It is safe from CPA, but it is easily sysceptible to CCA and PA.
 CTR mode: Counter mode
 At the CTR (Counter) mode of operation as an input block to the encryptor (Encrypt), i.e. as an IV,
 the value of a counter (Counter, Counter + 1,…, Counter + N – 1) is used. It also is a stream encryptor.
-The counter has the same size as the used block. As shown in Fig. 5, the XOR operation with the block of plain text is
+The counter has the same size as the used block. The XOR operation with the block of plain text is
 performed on the output block from the encryptor. All encryption blocks use the same encryption key.
 As this mode, It will not be affected by the broken block. It is very like OFB. But CTR will use the counter to be
 encrypted every time instead of the IV. So if you could get counter directly, you can encrypt/decrypt data in parallel.
+The ciphertext is the same length as the plaintext so padding is not required.
