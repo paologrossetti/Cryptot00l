@@ -76,6 +76,9 @@ class AESClass:
 
     def encrypt_file(self, filepath):
         try:
+            if not os.path.exists(filepath):
+                print(f"Sorry: {filepath} does not exist")
+                return
             if not self.__good_key():
                 print("Lenght key must be 16, 24 or 32 bytes long")
                 return
@@ -107,6 +110,10 @@ class AESClass:
 
     def decrypt_file(self, res_enc):
         try:
+            filepath_enc = res_enc.get('file_enc')
+            if not os.path.exists(filepath_enc):
+                print(f"Sorry: {filepath_enc} does not exist")
+                return
             # need: key, mode, iv
             if self.mode in (AES.MODE_CBC, AES.MODE_CFB, AES.MODE_OFB):
                 cipher = AES.new(self.key, self.mode, iv=b64decode(res_enc.get("iv")))
@@ -114,7 +121,7 @@ class AESClass:
                 cipher = AES.new(self.key, self.mode, nonce=b64decode(res_enc.get("nonce")))
             else:
                 cipher = AES.new(self.key, self.mode)
-            filepath_dec = f"{res_enc.get('file_enc')[:-4]}_dec"
+            filepath_dec = f"{filepath_enc[:-4]}_dec"
             with open(filepath_dec, mode='wb+') as writer_dec:
                 with open(res_enc.get('file_enc'), mode='rb') as reader_enc:
                     block = reader_enc.read(16)
