@@ -1,0 +1,40 @@
+RSA (Rivest–Shamir–Adleman) is an algorithm used by modern computers to encrypt and decrypt messages.
+It is an asymmetric cryptographic algorithm. Asymmetric means that there are two different keys.
+This is also called public key cryptography, because one of the keys can be given to anyone. The other key must be kept private.
+The algorithm is based on the fact that finding the factors of a large composite number is difficult:
+when the factors are prime numbers, the problem is called prime factorization. It is also a key pair (public and private key) generator.
+RSA involves a public key and private key. The public key can be known to everyone- it is used to encrypt messages.
+Messages encrypted using the public key can only be decrypted with the private key.
+
+The keys for the RSA algorithm are generated the following way:
+1 - Choose two different large random prime numbers p and q
+2 - Calculate n = p*q
+3 - Calculate the totient: ϕ( n ) = (p-1)*(q-1)
+    Funzione di Eulero o toziente: funzione definita come il numero degli interi compresi tra 1 e n che sono coprimi con n.
+    Coprimo: I coprimi ( co-primi ) sono una coppia di interi (a,b) che hanno il massimo comune divisore uguale a 1.
+4 - Choose an integer e such that 1 < e < ϕ( n ), and e is co-prime to ϕ( n ) i.e.:
+    e and ϕ ( n ) share no factors other than 1; gcd( e, ϕ ( n ) ) = 1.
+    e is released as the public key exponent.
+5 - Compute d to satisfy the congruence relation d * e ≡ 1 ( mod ϕ ( n ) ) i.e.: d * e = 1 + x * ϕ ( n ) for some integer x.
+    (Simply to say : Calculate d = ( 1 + x * ϕ ( n ) ) / e to be an integer)
+    d is kept as the private key exponent.
+
+The public key is made of the modulus n and the public exponent e.
+The personal key is made of p,q and the private exponent d which must be kept secret.
+(All parts of the private key must be kept secret in this form)
+
+Encrypting message
+Alice gives her public key ( n & e ) to Bob and keeps her private key secret. Bob wants to send message M to Alice.
+First he turns M into a number m smaller than n by using an agreed-upon reversible protocol known as a padding scheme.
+He then computes the ciphertext c corresponding to:
+c = m^e mod n
+Bob uses Alice's public key informations for encryption.
+Bob then sends c to Alice.
+
+Decrypting message
+Alice can recover m from c by using her private key d in the following procedure:
+Given m , she can recover the original distinct prime numbers, applying the Chinese remainder theorem to these two congruences yields:
+m^(e*d) ≡ m mod (p * q) ===> c^d ≡ m mod n ===> m = c^d mod n
+
+Encryption involves n and e: ciphertext = (m^e) mod n
+Decryption involves n and d: plaintext = (c^d) mod n
