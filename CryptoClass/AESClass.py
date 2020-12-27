@@ -1,13 +1,14 @@
 import os
 import logging
-from base64 import b64encode, b64decode
 from Crypto.Cipher import AES
+from base64 import b64encode, b64decode
 from Crypto.Util.Padding import pad, unpad
+from Crypto.Random import get_random_bytes
 
 
 class AESClass:
-    def __init__(self, key, mode):
-        self.key = key.encode()
+    def __init__(self, mode):
+        self.key = get_random_bytes(32)
         modes = {
             "ECB": AES.MODE_ECB,
             "CBC": AES.MODE_CBC,
