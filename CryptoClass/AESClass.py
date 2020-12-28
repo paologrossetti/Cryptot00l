@@ -16,12 +16,8 @@ class AESClass:
             "CFB": AES.MODE_CFB,
             "OFB": AES.MODE_OFB
         }
-        aes_mode = modes.get(mode, None)
-        if aes_mode:
-            self.mode = aes_mode
-        else:
-            self.mode = AES.MODE_CBC
-        print(f"AES:{mode} MODE")
+        self.mode = modes.get(mode, AES.MODE_CBC)
+        print(f"AES:{mode if mode else 'CBC'} MODE")
 
     def __good_key(self):
         len_ley = len(self.key)
