@@ -12,8 +12,11 @@ def main(args):
         'salsa20': start_salsa20,
         'chacha20': start_chacha20
     }
-    cipher = switch.get(args.cipher)
-    cipher(args)
+    cipher = switch.get(args.cipher, None)
+    if cipher:
+        cipher(args)
+    else:
+        print("Please, run the command with the -h or –help for usage information")
 
 
 def start_aes(args):
@@ -93,4 +96,8 @@ if __name__ == '__main__':
     group_stream.add_argument("-m", "--message", help="Message to encrypt")
     group_stream.add_argument("-f", "--file", help="Filepath to encrypt")
 
-    main(parser.parse_args())
+    args = parser.parse_args()
+    if hasattr(args, 'cipher'):
+        main(args)
+    else:
+        parser.print_help()
