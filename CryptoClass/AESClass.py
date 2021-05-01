@@ -83,15 +83,23 @@ class AESClass:
             filepath_enc = f"{filepath}_enc"
             with open(filepath_enc, mode='wb+') as writer:
                 with open(filepath, mode='rb') as reader:
-                    block = reader.read(16)
-                    while block:
+                    chunk_size = 1024
+                    chunk = reader.read(chunk_size)
+                    exact_block = True
+                    while chunk:
                         if self.mode in (AES.MODE_CFB, AES.MODE_CTR, AES.MODE_OFB):
-                            ct_bytes = cipher.encrypt(block)
+                            ct_bytes = cipher.encrypt(chunk)
                         else:
                             # pad: the output length is guaranteed to be a multiple of block_size
-                            ct_bytes = cipher.encrypt(pad(block, AES.block_size))
+                            if len(chunk) % AES.block_size == 0:
+                                ct_bytes = cipher.encrypt(chunk)
+                            else:
+                                ct_bytes = cipher.encrypt(pad(chunk, AES.block_size))
+                                exact_block = False
                         writer.write(ct_bytes)
-                        block = reader.read(16)
+                        chunk = reader.read(chunk_size)
+                    if exact_block:
+                        writer.write(cipher.encrypt(pad(b"", AES.block_size)))
             res = {"file_enc": filepath_enc}
             if self.mode in (AES.MODE_CBC, AES.MODE_CFB, AES.MODE_OFB):
                 iv = b64encode(cipher.iv).decode('utf-8')
@@ -121,10 +129,13 @@ class AESClass:
             filepath_dec = f"{filepath_enc[:-4]}_dec"
             with open(filepath_dec, mode='wb+') as writer_dec:
                 with open(res_enc.get('file_enc'), mode='rb') as reader_enc:
-                    block = reader_enc.read(16)
-                    while block:
-                        writer_dec.write(cipher.decrypt(block))
-                        block = reader_enc.read(16)
+                    chunk_size = 1024
+                    chunk = reader_enc.read(chunk_size)
+                    decrypted = b""
+                    while chunk:
+                        decrypted += cipher.decrypt(chunk)
+                        chunk = reader_enc.read(chunk_size)
+                    writer_dec.write(decrypted[:-(decrypted[len(decrypted)-1])]) # or writer_dec.write(unpad(decrypted, AES.block_size))
             print(f"File decrypted is: {filepath_dec}")
         except Exception as err:
             logging.error(f"Error in file decryption: {err}")
